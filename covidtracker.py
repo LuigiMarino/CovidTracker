@@ -27,31 +27,32 @@ covidData_MainCounter = covidData.find_all('div', attrs={'class' : 'maincounter-
 def removeComma(b):
     return b.replace(',', '')
 
+#Field names
+fields = ['Date', 'Total Cases', 'Total Deaths', 'Recovered', 'Daily Cases', 'Daily Deaths']
+#File name
+filename = 'data.csv'
+
+#Fucking with the data
+df = pd.read_csv(filename)
+covidData_TotalCases = df['Total Cases']
+covidData_TotalDeaths = df['Total Deaths']
+
+
+#print("Daily Cases: " + str(covidData_DailyCases))
+#print("Daily Deaths: " + str(covidData_DailyDeaths))
+
 #Strip out data and add to row entry
 for a in covidData_MainCounter:
     a = (a.text.strip())
     rowEntry.append(removeComma(a))
 
-#Field names
-fields = ['Date', 'Total_Cases', 'Total Deaths', 'Recovered']
-#File name
-filename = 'data.csv'
+covidData_DailyCases = int(rowEntry[1]) - df['Total Cases'].iat[-1]
+covidData_DailyDeaths = int(rowEntry[2]) - df['Total Deaths'].iat[-1]
 
-
+rowEntry.append(covidData_DailyCases)
+rowEntry.append(covidData_DailyDeaths)
 
 #With the file open, write the data
 with open(filename, 'a') as csvfile:
     csvwriter = csv.writer(csvfile)
     csvwriter.writerow(rowEntry)
-
-#Fucking with the data
-df = pd.read_csv(filename)
-covidData_TotalCases = df['Total_Cases']
-covidData_DailyCases = df['Total_Cases'].iat[-1] - df['Total_Cases'].iat[-2]
-covidData_TotalDeaths = df['Total_Deaths']
-covidData_DailyDeaths = df['Total_Deaths'].iat[-1] - df['Total_Deaths'].iat[-2]
-
-
-print("Daily Cases: " + str(covidData_DailyCases))
-print("Daily Deaths: " + str(covidData_DailyDeaths))
-
