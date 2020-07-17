@@ -3,6 +3,7 @@ import re
 import requests
 from datetime import date
 import csv
+import pandas as pd
 
 #Todays Date
 today = date.today()
@@ -32,12 +33,25 @@ for a in covidData_MainCounter:
     rowEntry.append(removeComma(a))
 
 #Field names
-fields = ['Date', 'Total Cases', 'Total Deaths', 'Recovered']
+fields = ['Date', 'Total_Cases', 'Total Deaths', 'Recovered']
 #File name
 filename = 'data.csv'
+
+
 
 #With the file open, write the data
 with open(filename, 'a') as csvfile:
     csvwriter = csv.writer(csvfile)
     csvwriter.writerow(rowEntry)
+
+#Fucking with the data
+df = pd.read_csv(filename)
+covidData_TotalCases = df['Total_Cases']
+covidData_DailyCases = df['Total_Cases'].iat[-1] - df['Total_Cases'].iat[-2]
+covidData_TotalDeaths = df['Total_Deaths']
+covidData_DailyDeaths = df['Total_Deaths'].iat[-1] - df['Total_Deaths'].iat[-2]
+
+
+print("Daily Cases: " + str(covidData_DailyCases))
+print("Daily Deaths: " + str(covidData_DailyDeaths))
 
